@@ -5,6 +5,5 @@ title: photography
 nav: true
 nav_order: 5
 description: Landscape, wildlife, and documentary photography.
+redirect_to: https://photography.sriranga.me
 ---
-
-Portfolio coming soon. In the meantime, you can find my work on [Instagram](https://www.instagram.com/sriranga_photography/).
