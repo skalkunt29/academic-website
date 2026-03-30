@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://sriranga.github.io/sitemap.xml
+Sitemap: https://sriranga.me/sitemap.xml
