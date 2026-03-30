@@ -25,10 +25,10 @@ ninja.data = [{
           },
         },{id: "nav-photography",
           title: "photography",
-          description: "Landscape, wildlife, and documentary photography.",
+          description: "",
           section: "Navigation",
           handler: () => {
-            window.location.href = "/photography/";
+            window.location.href = "/https:/photography.sriranga.me";
           },
         },{id: "nav-contact",
           title: "contact",
