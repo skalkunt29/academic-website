@@ -5,5 +5,8 @@ title: photography
 nav: true
 nav_order: 5
 description: Landscape, wildlife, and documentary photography.
-redirect_to: https://photography.sriranga.me
 ---
+
+<script>window.location.replace("https://photography.sriranga.me");</script>
+
+Redirecting to [photography.sriranga.me](https://photography.sriranga.me)...
