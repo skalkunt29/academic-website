@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CU Boulder CSEN PhD Milestone Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .status-completed   { @apply bg-green-100 text-green-800; }
+    .status-eligible    { @apply bg-blue-100 text-blue-800; }
+    .status-in-progress { @apply bg-yellow-100 text-yellow-800; }
+    .status-not-eligible{ @apply bg-red-100 text-red-700; }
+    .status-not-started { @apply bg-gray-100 text-gray-500; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+
+  <div class="max-w-4xl mx-auto space-y-8">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-[#CFB87C] to-[#b89a5a] rounded-2xl p-6 text-white shadow">
+      <h1 class="text-2xl font-bold">CU Boulder CSEN PhD Milestone Tracker</h1>
+      <p class="text-sm opacity-80 mt-1">Computer Science & Engineering · Track your progress toward degree completion</p>
+    </div>
+
+    <!-- SECTION 1: Milestone Tracker -->
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Milestone Tracker</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-200 text-left text-gray-500 uppercase text-xs tracking-wide">
+              <th class="pb-2 pr-4 w-48">Milestone</th>
+              <th class="pb-2 pr-4 w-28">Type</th>
+              <th class="pb-2 pr-4 w-56">Input</th>
+              <th class="pb-2 pr-4 w-28">Status</th>
+              <th class="pb-2">Dependency</th>
+            </tr>
+          </thead>
+          <tbody id="milestoneTable" class="divide-y divide-gray-100">
+            <!-- Rows are rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Your Deadlines Lookup -->
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Your Deadlines</h2>
+      <p class="text-sm text-gray-500 mb-4">Select your entry semester to see your recommended deadline schedule.</p>
+      <div class="flex items-center gap-4 mb-4">
+        <label class="text-sm font-medium text-gray-700">Entry Semester:</label>
+        <select id="entrySemester" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#CFB87C]">
+          <option value="">-- Select --</option>
+        </select>
+      </div>
+      <div id="deadlineResult" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- SECTION 3: Recommended Timeline -->
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Recommended Timeline</h2>
+      <div class="space-y-3 text-sm text-gray-700">
+        <div class="flex items-start gap-3">
+          <span class="mt-0.5 w-5 h-5 rounded-full bg-[#CFB87C] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">1</span>
+          <div><span class="font-medium">Breadth (BIN) Courses</span> — Complete within the first <strong>five semesters</strong></div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="mt-0.5 w-5 h-5 rounded-full bg-[#CFB87C] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">2</span>
+          <div><span class="font-medium">Area Exam</span> — After BIN classes, no later than end of <strong>6th semester</strong></div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="mt-0.5 w-5 h-5 rounded-full bg-[#CFB87C] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">3</span>
+          <div><span class="font-medium">Proposal Defense</span> — After Area Exam + 30 credits, no later than end of <strong>8th semester</strong></div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="mt-0.5 w-5 h-5 rounded-full bg-[#CFB87C] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">4</span>
+          <div><span class="font-medium">Dissertation Defense</span> — Complete by end of <strong>12th semester</strong></div>
+        </div>
+      </div>
+      <p class="mt-4 text-xs text-gray-500 italic">Format of Area Exam and Proposal Defense is dependent on your advisor, research area, and committee.</p>
+    </div>
+
+    <!-- SECTION 4: Useful Links -->
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Useful Links</h2>
+      <ul class="space-y-2 text-sm">
+        <li><a href="https://www.colorado.edu/cs/academics/graduate-programs/doctor-philosophy/degree-requirements" target="_blank" class="text-blue-600 hover:underline">Degree Requirements (Transfer credits, Committee details, Dissertation hours)</a></li>
+        <li><a href="https://www.colorado.edu/cs/academics/graduate-programs/breadth-courses" target="_blank" class="text-blue-600 hover:underline">Breadth (BIN) Course List</a></li>
+      </ul>
+    </div>
+
+  </div><!-- /max-w -->
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const BIN_COURSES = {
+  bin1: [
+    "CSCI 5229 Computer Graphics",
+    "CSCI 5244 Quantum Computation",
+    "CSCI 5254 Convex Optimization",
+    "CSCI 5434 Probability for CS",
+    "CSCI 5444 Theory of Computation",
+    "CSCI 5446 Chaotic Dynamics",
+    "CSCI 5454 Design & Analysis of Algorithms",
+    "CSCI 5526 Computational Tools",
+    "CSCI 5576 High-Performance Scientific Computing",
+    "CSCI 5606 Numerical Computation",
+    "CSCI 5636 Numerical PDEs",
+    "CSCI 5646 Numerical Linear Algebra",
+    "CSCI 5654 Linear Programming",
+    "CSCI 5676 Numerical Methods Optimization",
+  ],
+  bin2: [
+    "CSCI 5202 Robotics",
+    "CSCI 5302 Advanced Robotics",
+    "CSCI 5322 Algorithmic HRI",
+    "CSCI 5352 Network Analysis",
+    "CSCI 5402 Research Methods HRI",
+    "CSCI 5502 Data Mining",
+    "CSCI 5616 VR",
+    "CSCI 5622 Machine Learning",
+    "CSCI 5722 Computer Vision",
+    "CSCI 5822 Probabilistic Modeling",
+    "CSCI 5832 NLP",
+    "CSCI 5839 User-Centered Design",
+    "CSCI 5849 Input Interaction",
+    "CSCI 5922 Neural Networks/Deep Learning",
+    "CSCI 5942 AI Engineering",
+  ],
+  bin3: [
+    "CSCI 5135 Computer-Aided Verification",
+    "CSCI 5214 Big Data Architecture",
+    "CSCI 5253 Datacenter Scale Computing",
+    "CSCI 5263 Quantum Computer Architecture",
+    "CSCI 5273 Network Systems",
+    "CSCI 5403 Intro to Cyber Security",
+    "CSCI 5413 Ethical Hacking",
+    "CSCI 5448 OO Analysis and Design",
+    "CSCI 5523 Modern Offense/Defense Cybersecurity",
+    "CSCI 5525 Compiler Construction",
+    "CSCI 5535 Programming Languages",
+    "CSCI 5573 Advanced Operating Systems",
+    "CSCI 5673 Distributed Systems",
+    "CSCI 5817 Database Systems",
+    "CSCI 5828 Foundations of Software Engineering",
+    "CSCI 5854 Theoretical Foundation of Autonomous Systems",
+  ],
+};
+
+// Deadline lookup table: entry semester -> { breadth, areaExam, proposal, dissertation }
+const DEADLINES = [
+  { entry: "Fall 2016",   breadth: "Fall 2018",   areaExam: "Spring 2019", proposal: "Spring 2020", dissertation: "Fall 2022" },
+  { entry: "Spring 2017", breadth: "Spring 2019", areaExam: "Fall 2019",   proposal: "Fall 2020",   dissertation: "Spring 2023" },
+  { entry: "Fall 2017",   breadth: "Fall 2019",   areaExam: "Spring 2020", proposal: "Spring 2021", dissertation: "Fall 2023" },
+  { entry: "Spring 2018", breadth: "Spring 2020", areaExam: "Fall 2020",   proposal: "Fall 2021",   dissertation: "Spring 2024" },
+  { entry: "Fall 2018",   breadth: "Fall 2020",   areaExam: "Spring 2021", proposal: "Spring 2022", dissertation: "Fall 2024" },
+  { entry: "Spring 2019", breadth: "Spring 2021", areaExam: "Fall 2021",   proposal: "Fall 2022",   dissertation: "Spring 2025" },
+  { entry: "Fall 2019",   breadth: "Fall 2021",   areaExam: "Spring 2022", proposal: "Spring 2023", dissertation: "Fall 2025" },
+  { entry: "Spring 2020", breadth: "Spring 2022", areaExam: "Fall 2022",   proposal: "Fall 2023",   dissertation: "Spring 2026" },
+  { entry: "Fall 2020",   breadth: "Fall 2022",   areaExam: "Spring 2023", proposal: "Spring 2024", dissertation: "Fall 2026" },
+  { entry: "Spring 2021", breadth: "Spring 2023", areaExam: "Fall 2023",   proposal: "Fall 2024",   dissertation: "Spring 2027" },
+  { entry: "Fall 2021",   breadth: "Fall 2023",   areaExam: "Spring 2024", proposal: "Spring 2025", dissertation: "Fall 2027" },
+  { entry: "Spring 2022", breadth: "Spring 2024", areaExam: "Fall 2024",   proposal: "Fall 2025",   dissertation: "Spring 2028" },
+  { entry: "Fall 2022",   breadth: "Fall 2024",   areaExam: "Spring 2025", proposal: "Spring 2026", dissertation: "Fall 2028" },
+  { entry: "Spring 2023", breadth: "Spring 2025", areaExam: "Fall 2025",   proposal: "Fall 2026",   dissertation: "Spring 2029" },
+  { entry: "Fall 2023",   breadth: "Fall 2025",   areaExam: "Spring 2026", proposal: "Spring 2027", dissertation: "Fall 2029" },
+  { entry: "Spring 2024", breadth: "Spring 2026", areaExam: "Fall 2026",   proposal: "Fall 2027",   dissertation: "Spring 2030" },
+  { entry: "Fall 2024",   breadth: "Fall 2026",   areaExam: "Spring 2027", proposal: "Spring 2028", dissertation: "Fall 2030" },
+  { entry: "Spring 2025", breadth: "Spring 2027", areaExam: "Fall 2027",   proposal: "Fall 2028",   dissertation: "Spring 2031" },
+  { entry: "Fall 2025",   breadth: "Fall 2027",   areaExam: "Spring 2028", proposal: "Spring 2029", dissertation: "Fall 2031" },
+  { entry: "Spring 2026", breadth: "Spring 2028", areaExam: "Fall 2028",   proposal: "Fall 2029",   dissertation: "Spring 2032" },
+  { entry: "Fall 2026",   breadth: "Fall 2028",   areaExam: "Spring 2029", proposal: "Spring 2030", dissertation: "Fall 2032" },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+const state = {
+  profDev6000: false,
+  profDev6100: false,
+  profDev6200: false,
+  bin1: "",
+  bin2: "",
+  bin3: "",
+  electives: 0,
+  areaExam: false,
+  proposalDefense: false,
+  dissertationDefense: false,
+};
+
+// ─── ELIGIBILITY LOGIC (mirrors the Excel formulas) ─────────────────────────
+
+function getStatus(key) {
+  switch (key) {
+    case "profDev6000":
+      return state.profDev6000 ? "Completed" : "Not started";
+    case "profDev6100":
+      return state.profDev6100 ? "Completed" : "Not started";
+    case "profDev6200":
+      return state.profDev6200 ? "Completed" : "Not started";
+    case "bin1":
+      return state.bin1 !== "" ? "Completed" : "Not started";
+    case "bin2":
+      return state.bin2 !== "" ? "Completed" : "Not started";
+    case "bin3":
+      return state.bin3 !== "" ? "Completed" : "Not started";
+    case "electives":
+      if (state.electives >= 18) return "Completed";
+      if (state.electives > 0)  return "In progress";
+      return "Not started";
+    case "areaExam": {
+      if (state.areaExam) return "Completed";
+      const binsComplete = state.bin1 !== "" && state.bin2 !== "" && state.bin3 !== "";
+      return binsComplete ? "Eligible" : "Not eligible";
+    }
+    case "proposalDefense": {
+      if (state.proposalDefense) return "Completed";
+      const prereqs = [
+        getStatus("profDev6000"), getStatus("profDev6100"), getStatus("profDev6200"),
+        getStatus("bin1"), getStatus("bin2"), getStatus("bin3"),
+        getStatus("electives"), getStatus("areaExam"),
+      ];
+      const allComplete = prereqs.every(s => s === "Completed");
+      return allComplete ? "Eligible" : "Not eligible";
+    }
+    case "dissertationDefense": {
+      if (state.dissertationDefense) return "Completed";
+      return getStatus("proposalDefense") === "Completed" ? "Eligible" : "Not eligible";
+    }
+    default:
+      return "Not started";
+  }
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+
+function statusBadge(s) {
+  const map = {
+    "Completed":   "bg-green-100 text-green-800",
+    "Eligible":    "bg-blue-100 text-blue-800",
+    "In progress": "bg-yellow-100 text-yellow-800",
+    "Not eligible":"bg-red-100 text-red-700",
+    "Not started": "bg-gray-100 text-gray-500",
+  };
+  return `<span class="px-2 py-0.5 rounded-full text-xs font-medium ${map[s] || ''}">${s}</span>`;
+}
+
+function dropdownInput(key, courses) {
+  const val = state[key];
+  const opts = courses.map(c => `<option value="${c}" ${val === c ? 'selected' : ''}>${c}</option>`).join('');
+  return `<select data-key="${key}" onchange="handleChange(event)"
+    class="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#CFB87C]">
+    <option value="">-- Select course --</option>${opts}
+  </select>`;
+}
+
+function checkboxInput(key) {
+  return `<input type="checkbox" data-key="${key}" onchange="handleChange(event)"
+    ${state[key] ? 'checked' : ''}
+    class="w-4 h-4 accent-[#CFB87C] cursor-pointer" />`;
+}
+
+function numberInput(key) {
+  return `<input type="number" data-key="${key}" oninput="handleChange(event)"
+    value="${state[key]}" min="0" max="18"
+    class="w-20 border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#CFB87C]" />
+  <span class="text-xs text-gray-400 ml-1">/ 18 credits</span>`;
+}
+
+const ROWS = [
+  { key: "profDev6000",        label: "Professional Dev 6000", type: "Coursework",        input: () => checkboxInput("profDev6000"),        dep: "—" },
+  { key: "profDev6100",        label: "Professional Dev 6100", type: "Coursework",        input: () => checkboxInput("profDev6100"),        dep: "—" },
+  { key: "profDev6200",        label: "Professional Dev 6200", type: "Coursework",        input: () => checkboxInput("profDev6200"),        dep: "—" },
+  { key: "bin1",               label: "BIN 1",                 type: "Coursework",        input: () => dropdownInput("bin1", BIN_COURSES.bin1), dep: "—" },
+  { key: "bin2",               label: "BIN 2",                 type: "Coursework",        input: () => dropdownInput("bin2", BIN_COURSES.bin2), dep: "—" },
+  { key: "bin3",               label: "BIN 3",                 type: "Coursework",        input: () => dropdownInput("bin3", BIN_COURSES.bin3), dep: "—" },
+  { key: "electives",          label: "Electives",             type: "Coursework",        input: () => numberInput("electives"),           dep: "—" },
+  { key: "areaExam",           label: "Area Exam",             type: "Literature Review", input: () => checkboxInput("areaExam"),           dep: "BIN 1, 2, 3" },
+  { key: "proposalDefense",    label: "Proposal Defense",      type: "Defense",           input: () => checkboxInput("proposalDefense"),    dep: "All above + Area Exam" },
+  { key: "dissertationDefense",label: "Dissertation Defense",  type: "Defense",           input: () => checkboxInput("dissertationDefense"),dep: "Proposal Defense" },
+];
+
+function renderTable() {
+  const tbody = document.getElementById("milestoneTable");
+  tbody.innerHTML = ROWS.map(row => {
+    const status = getStatus(row.key);
+    const isCheckboxCompleted = ["profDev6000","profDev6100","profDev6200","areaExam","proposalDefense","dissertationDefense"].includes(row.key);
+    const canCheck = isCheckboxCompleted && (
+      row.key === "areaExam"            ? getStatus("areaExam") === "Eligible" || state.areaExam :
+      row.key === "proposalDefense"     ? getStatus("proposalDefense") === "Eligible" || state.proposalDefense :
+      row.key === "dissertationDefense" ? getStatus("dissertationDefense") === "Eligible" || state.dissertationDefense :
+      true
+    );
+    const dimmed = isCheckboxCompleted && !canCheck ? "opacity-40 pointer-events-none" : "";
+    return `<tr class="hover:bg-gray-50 transition-colors">
+      <td class="py-3 pr-4 font-medium text-gray-800">${row.label}</td>
+      <td class="py-3 pr-4 text-gray-500 text-xs">${row.type}</td>
+      <td class="py-3 pr-4 ${dimmed}">${row.input()}</td>
+      <td class="py-3 pr-4">${statusBadge(status)}</td>
+      <td class="py-3 text-xs text-gray-400">${row.dep}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── EVENT HANDLING ──────────────────────────────────────────────────────────
+
+function handleChange(e) {
+  const key = e.target.dataset.key;
+  if (e.target.type === "checkbox") {
+    state[key] = e.target.checked;
+  } else if (e.target.type === "number") {
+    state[key] = Math.max(0, Math.min(18, parseInt(e.target.value, 10) || 0));
+  } else {
+    state[key] = e.target.value;
+  }
+  renderTable();
+  saveState();
+}
+
+// ─── DEADLINE LOOKUP ─────────────────────────────────────────────────────────
+
+function setupDeadlines() {
+  const sel = document.getElementById("entrySemester");
+  DEADLINES.forEach(d => {
+    const opt = document.createElement("option");
+    opt.value = d.entry;
+    opt.textContent = d.entry;
+    sel.appendChild(opt);
+  });
+
+  sel.addEventListener("change", () => {
+    const entry = sel.value;
+    const result = document.getElementById("deadlineResult");
+    if (!entry) { result.classList.add("hidden"); return; }
+    const data = DEADLINES.find(d => d.entry === entry);
+    result.classList.remove("hidden");
+    result.innerHTML = [
+      { label: "Breadth Deadline",      value: data.breadth,       color: "bg-purple-50 border-purple-200 text-purple-800" },
+      { label: "Area Exam Deadline",     value: data.areaExam,      color: "bg-blue-50 border-blue-200 text-blue-800" },
+      { label: "Proposal Deadline",      value: data.proposal,      color: "bg-yellow-50 border-yellow-200 text-yellow-800" },
+      { label: "Dissertation Deadline",  value: data.dissertation,  color: "bg-green-50 border-green-200 text-green-800" },
+    ].map(item => `
+      <div class="border rounded-xl p-4 ${item.color}">
+        <div class="text-xs font-medium opacity-70 mb-1">${item.label}</div>
+        <div class="text-base font-bold">${item.value}</div>
+      </div>
+    `).join('');
+  });
+}
+
+// ─── PERSISTENCE (localStorage) ─────────────────────────────────────────────
+
+function saveState() {
+  localStorage.setItem("phd_tracker_state", JSON.stringify(state));
+}
+
+function loadState() {
+  const saved = localStorage.getItem("phd_tracker_state");
+  if (saved) {
+    try {
+      Object.assign(state, JSON.parse(saved));
+    } catch {}
+  }
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+
+loadState();
+renderTable();
+setupDeadlines();
+</script>
+</body>
+</html>
