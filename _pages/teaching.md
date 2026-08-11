@@ -32,7 +32,7 @@ nav_order: 3
         <h4 class="card-title mb-1"><a href="https://csci3403.com" target="_blank">CSCI 3403 — Introduction to Cybersecurity</a></h4>
         <span class="badge text-uppercase" style="background:#ff9800;color:#fff;font-size:0.7em;padding:4px 10px;border-radius:4px;">Teaching Assistant</span>
       </div>
-      <p class="text-muted mb-1"><strong>Semesters:</strong> Fall 2023 · Fall 2024 · Fall 2025</p>
+      <p class="text-muted mb-1"><strong>Semesters:</strong> Fall 2023 · Fall 2024 · Fall 2025 · Fall 2026</p>
       <p class="card-text mt-2">Introduction to computer and network security, covering common vulnerabilities, web security, and system-level attacks.</p>
       <ul>
         <li>Led recitations and supported students across multiple semesters</li>
