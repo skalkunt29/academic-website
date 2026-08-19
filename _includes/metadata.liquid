@@ -238,6 +238,16 @@
   {% endif %}
   {% assign sameaslinks = sameaslinks | uniq %}
 
+  {% comment %}
+    rel="me" identity links. GitHub already emits rel="nofollow me" on its
+    profile website field pointing back here; declaring the reverse makes the
+    identity claim bidirectional. This is an identity assertion, not a ranking
+    link, so the nofollow on the other end does not matter.
+  {% endcomment %}
+  {% for link in sameaslinks %}
+    <link rel="me" href="{{ link }}">
+  {% endfor %}
+
   {% capture site_root %}{{ site.baseurl | prepend: site.url }}{% endcapture %}
   {% capture person_id %}{{ site_root }}/#person{% endcapture %}
   {% capture website_id %}{{ site_root }}/#website{% endcapture %}
