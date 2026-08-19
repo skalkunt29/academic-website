@@ -3,16 +3,18 @@
 # -----------------------------------------------------------------------------
 
 title: blank # the website title (if blank, full name will be used instead)
+title_suffix: PhD Student in Computer Science, CU Boulder # appended to the homepage <title> for search disambiguation
 first_name: Sriranga
 middle_name:
 last_name: Ramaswamy
 contact_note:
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-  PhD student. Academic website.
+  Sriranga Ramaswamy is a PhD student in Computer Science at the University of Colorado Boulder,
+  working on systems and security. He is also a landscape and wildlife photographer.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
-keywords: academic website, research # add your own keywords or leave empty
+keywords: Sriranga Ramaswamy, Sriranga, Ramaswamy, CU Boulder, University of Colorado Boulder, computer science, PhD student, systems, security, program analysis, photography # add your own keywords or leave empty
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
 icon: 🎓 # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
 
@@ -43,23 +45,54 @@ max_width: 930px
 # -----------------------------------------------------------------------------
 # Display links to the page with a preview object on social media.
 # see https://schema.org/docs/faq.html for more information
-serve_og_meta: false # Include Open Graph meta tags in the HTML head
-serve_schema_org: false # Include Schema.org in the HTML head
-og_image: # The site-wide (default for all links) Open Graph preview image
+serve_og_meta: true # Include Open Graph meta tags in the HTML head
+serve_schema_org: true # Include Schema.org in the HTML head
+og_image: https://sriranga.me/assets/img/ranga.jpg # The site-wide (default for all links) Open Graph preview image
+
+# -----------------------------------------------------------------------------
+# Person entity (schema.org)
+# -----------------------------------------------------------------------------
+# Emitted as a schema.org Person node on the homepage, with a stable @id
+# (<url>/#person) so search engines can consolidate every profile below into a
+# single entity for the name "Sriranga Ramaswamy".
+
+person:
+  job_title: PhD Student in Computer Science
+  affiliation: University of Colorado Boulder
+  affiliation_url: https://www.colorado.edu/
+  affiliation_department: Department of Computer Science
+  image: https://sriranga.me/assets/img/ranga.jpg
+  email: sriranga@colorado.edu
+  also_known_as:
+    - Sriranga
+    - Ranga Ramaswamy
+  knows_about:
+    - Computer Systems
+    - Computer Security
+    - Operating Systems
+    - Program Analysis
+    - Machine Learning
+    - Photography
+  # Extra properties you own, merged into sameAs alongside _data/socials.yml
+  same_as:
+    - https://photography.sriranga.me/
 
 # -----------------------------------------------------------------------------
 # Search engine verification
 # -----------------------------------------------------------------------------
 
 # For Google Search Console, see https://support.google.com/webmasters/answer/9008080?hl=en#meta_tag_verification&zippy=%2Chtml-tag
+# NOTE: the meta tag only renders when the matching enable_* flag below is true.
+enable_google_verification: false # set to true once google_site_verification is filled in
 google_site_verification: # your google-site-verification ID (Google Search Console)
+enable_bing_verification: false # set to true once bing_site_verification is filled in
 bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 
 # -----------------------------------------------------------------------------
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: Sriranga Sridharan # blog_name will be displayed in your blog page
+blog_name: Sriranga Ramaswamy # blog_name will be displayed in your blog page
 blog_description: Academic notes and research updates
 permalink: /blog/:year/:title/
 lsi: false # produce an index for related posts
@@ -255,9 +288,17 @@ enable_publication_thumbnails: true
 # These are the defaults
 external_links:
   enabled: true
-  rel: external nofollow noopener
   target: _blank
-  exclude:
+  rel:
+    value: external nofollow noopener
+    # Links to properties you own must NOT be nofollow-ed: nofollow tells Google
+    # "I do not vouch for this", which is the opposite of the entity signal we want.
+    exclude:
+      - https://photography\.sriranga\.me(/?|/.*)?
+      - https://(www\.)?github\.com/skalkunt29(/?|/.*)?
+      - https://(www\.)?linkedin\.com/in/sriranga-kr(/?|/.*)?
+      - https://(www\.)?instagram\.com/sriranga_photography(/?|/.*)?
+      - https://csci3403\.com(/?|/.*)?
 
 # -----------------------------------------------------------------------------
 # Responsive WebP Images
